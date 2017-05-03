@@ -1,0 +1,10 @@
+{
+  "generator-mendix": {
+    "promptValues": {
+      "copyright": "Mendix 2017",
+      "license": "Apache 2",
+      "author": "fotherga",
+      "boilerplate": "appstore"
+    }
+  }
+}
