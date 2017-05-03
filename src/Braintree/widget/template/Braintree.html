@@ -1,10 +1,18 @@
-<div class="widgetname">
-    <form>
-        <div class="input-group" data-dojo-attach-point="inputNodes">
-            <input type="text" class="form-control" placeholder="#rrggbb" data-dojo-attach-point="colorInputNode">
-            <div class="input-group-addon"><input type="color" data-dojo-attach-point="colorSelectNode"></div>
-        </div>
+<div class="braintree">
+    <form id="checkout-form" action="/transaction-endpoint" method="post">
+        <div id="error-message"></div>
+
+        <label for="card-number">Card Number</label>
+        <div class="hosted-field" id="card-number"></div>
+
+        <label for="cvv">CVV</label>
+        <div class="hosted-field" id="cvv"></div>
+
+        <label for="expiration-date">Expiration Date</label>
+        <div class="hosted-field" id="expiration-date"></div>
+
+        <input type="hidden" name="payment_method_nonce">
+        <input type="submit" value="Pay" disabled>
     </form>
-    <div class="widgetname-infoTextNode" data-dojo-attach-point="infoTextNode" />
 </div>
 

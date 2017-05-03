@@ -6,24 +6,29 @@
     <icon />
 
     <properties>
-        <property key="backgroundColor" type="attribute">
-            <caption>Background Color</caption>
-            <category>Appearance</category>
-            <description>The background color of the widget.</description>
+        <property key="token" type="attribute">
+            <caption>Token from Java Action</caption>
+            <category>Behavior</category>
+            <description>Token used to validate client with Braintree server</description>
             <attributeTypes>
                 <attributeType name="String" />
             </attributeTypes>
         </property>
-        <property key="messageString" type="string" required="true" defaultValue="">
-            <caption>Message</caption>
-            <category>Appearance</category>
-            <description>The message visible within the widget.</description>
-        </property>
-        <property key="mfToExecute" type="microflow" required="false" defaultValue="">
-            <caption>Microflow</caption>
+        <property key="Nonce" type="attribute">
+            <caption>Nonce</caption>
             <category>Behavior</category>
-            <description>The microflow to execute on click.</description>
-            <returnType type="Boolean" />
+            <description>Response from Braintree server after payment submission.</description>
+            <attributeTypes>
+                <attributeType name="String" />
+            </attributeTypes>
+        </property>
+        <property key="Amount" type="attribute">
+            <caption>Payment Amount</caption>
+            <category>Behavior</category>
+            <description>Amount to be charged during this transaction</description>
+            <attributeTypes>
+                <attributeType name="Decimal" />
+            </attributeTypes>
         </property>
     </properties>
 </widget>
