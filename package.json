@@ -6,6 +6,7 @@
   "author": "fotherga",
   "private": true,
   "dependencies": {
+    "braintree-web": "^3.14.0"
   },
   "devDependencies": {
     "del": "^2.2.2",

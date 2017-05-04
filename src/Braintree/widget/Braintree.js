@@ -35,22 +35,20 @@ define([
     "dojo/_base/event",
 
     "Braintree/lib/jquery-1.11.2",
+    "Braintree/lib/braintreeClient",
+    "Braintree/lib/braintreeHostedFields",
     "dojo/text!Braintree/widget/template/Braintree.html"
-], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, lang, dojoText, dojoHtml, dojoEvent, _jQuery, widgetTemplate) {
+], function(declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, lang, dojoText, dojoHtml, dojoEvent, _jQuery, btClient, btHostedFields, widgetTemplate) {
     "use strict";
 
     var $ = _jQuery.noConflict(true);
 
     // Declare widget's prototype.
-    return declare("Braintree.widget.Braintree", [ _WidgetBase, _TemplatedMixin ], {
+    return declare("Braintree.widget.Braintree", [_WidgetBase, _TemplatedMixin], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
 
         // DOM elements
-        // inputNodes: null,
-        // colorSelectNode: null,
-        // colorInputNode: null,
-        // infoTextNode: null,
 
         // Parameters configured in the Modeler.
         mfToExecute: "",
@@ -64,17 +62,17 @@ define([
         _readOnly: false,
 
         // dojo.declare.constructor is called to construct the widget instance. Implement to initialize non-primitive properties.
-        constructor: function () {
+        constructor: function() {
             logger.debug(this.id + ".constructor");
             this._handles = [];
         },
 
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
-        postCreate: function () {
+        postCreate: function() {
             logger.debug(this.id + ".postCreate");
-
+            console.log(this.btClient);
             if (this.readOnly || this.get("disabled") || this.readonly) {
-              this._readOnly = true;
+                this._readOnly = true;
             }
 
             this._updateRendering();
@@ -82,7 +80,7 @@ define([
         },
 
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
-        update: function (obj, callback) {
+        update: function(obj, callback) {
             logger.debug(this.id + ".update");
 
             this._contextObj = obj;
@@ -91,28 +89,28 @@ define([
         },
 
         // mxui.widget._WidgetBase.enable is called when the widget should enable editing. Implement to enable editing if widget is input widget.
-        enable: function () {
-          logger.debug(this.id + ".enable");
+        enable: function() {
+            logger.debug(this.id + ".enable");
         },
 
         // mxui.widget._WidgetBase.enable is called when the widget should disable editing. Implement to disable editing if widget is input widget.
-        disable: function () {
-          logger.debug(this.id + ".disable");
+        disable: function() {
+            logger.debug(this.id + ".disable");
         },
 
         // mxui.widget._WidgetBase.resize is called when the page's layout is recalculated. Implement to do sizing calculations. Prefer using CSS instead.
-        resize: function (box) {
-          logger.debug(this.id + ".resize");
+        resize: function(box) {
+            logger.debug(this.id + ".resize");
         },
 
         // mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
-        uninitialize: function () {
-          logger.debug(this.id + ".uninitialize");
+        uninitialize: function() {
+            logger.debug(this.id + ".uninitialize");
             // Clean up listeners, helper objects, etc. There is no need to remove listeners added with this.connect / this.subscribe / this.own.
         },
 
         // We want to stop events on a mobile device
-        _stopBubblingEventOnMobile: function (e) {
+        _stopBubblingEventOnMobile: function(e) {
             logger.debug(this.id + "._stopBubblingEventOnMobile");
             if (typeof document.ontouchstart !== "undefined") {
                 dojoEvent.stop(e);
@@ -120,25 +118,11 @@ define([
         },
 
         // Attach events to HTML dom elements
-        _setupEvents: function () {
+        _setupEvents: function() {
             logger.debug(this.id + "._setupEvents");
-            // this.connect(this.colorSelectNode, "change", function (e) {
-            //     // Function from mendix object to set an attribute.
-            //     this._contextObj.set(this.backgroundColor, this.colorSelectNode.value);
-            // });
-
-            // this.connect(this.infoTextNode, "click", function (e) {
-            //     // Only on mobile stop event bubbling!
-            //     this._stopBubblingEventOnMobile(e);
-
-            //     // If a microflow has been set execute the microflow on a click.
-            //     if (this.mfToExecute !== "") {
-            //         this._execMf(this.mfToExecute, this._contextObj.getGuid());
-            //     }
-            // });
         },
 
-        _execMf: function (mf, guid, cb) {
+        _execMf: function(mf, guid, cb) {
             logger.debug(this.id + "._execMf");
             if (mf && guid) {
                 mx.ui.action(mf, {
@@ -146,12 +130,12 @@ define([
                         applyto: "selection",
                         guids: [guid]
                     },
-                    callback: lang.hitch(this, function (objs) {
+                    callback: lang.hitch(this, function(objs) {
                         if (cb && typeof cb === "function") {
                             cb(objs);
                         }
                     }),
-                    error: function (error) {
+                    error: function(error) {
                         console.debug(error.description);
                     }
                 }, this);
@@ -159,57 +143,37 @@ define([
         },
 
         // Rerender the interface.
-        _updateRendering: function (callback) {
+        _updateRendering: function(callback) {
             logger.debug(this.id + "._updateRendering");
-            // this.colorSelectNode.disabled = this._readOnly;
-            // this.colorInputNode.disabled = this._readOnly;
 
-            // if (this._contextObj !== null) {
-            //     dojoStyle.set(this.domNode, "display", "block");
+            if (this._contextObj !== null) {
+                dojoStyle.set(this.domNode, "display", "block");
+            } else {
+                dojoStyle.set(this.domNode, "display", "none");
+            }
 
-            //     var colorValue = this._contextObj.get(this.backgroundColor);
+            // Important to clear all validations!
+            this._clearValidations();
 
-            //     this.colorInputNode.value = colorValue;
-            //     this.colorSelectNode.value = colorValue;
-
-            //     dojoHtml.set(this.infoTextNode, this.messageString);
-            //     dojoStyle.set(this.infoTextNode, "background-color", colorValue);
-            // } else {
-            //     dojoStyle.set(this.domNode, "display", "none");
-            // }
-
-            // // Important to clear all validations!
-            // this._clearValidations();
-
-            // // The callback, coming from update, needs to be executed, to let the page know it finished rendering
-            // this._executeCallback(callback, "_updateRendering");
+            // The callback, coming from update, needs to be executed, to let the page know it finished rendering
+            this._executeCallback(callback, "_updateRendering");
         },
 
         // Handle validations.
-        _handleValidation: function (validations) {
+        _handleValidation: function(validations) {
             logger.debug(this.id + "._handleValidation");
             this._clearValidations();
-
-            var validation = validations[0],
-                message = validation.getReasonByAttribute(this.backgroundColor);
-
-            if (this._readOnly) {
-                validation.removeAttribute(this.backgroundColor);
-            } else if (message) {
-                this._addValidation(message);
-                validation.removeAttribute(this.backgroundColor);
-            }
         },
 
         // Clear validations.
-        _clearValidations: function () {
+        _clearValidations: function() {
             logger.debug(this.id + "._clearValidations");
             dojoConstruct.destroy(this._alertDiv);
             this._alertDiv = null;
         },
 
         // Show an error message.
-        _showError: function (message) {
+        _showError: function(message) {
             logger.debug(this.id + "._showError");
             if (this._alertDiv !== null) {
                 dojoHtml.set(this._alertDiv, message);
@@ -223,13 +187,13 @@ define([
         },
 
         // Add a validation.
-        _addValidation: function (message) {
+        _addValidation: function(message) {
             logger.debug(this.id + "._addValidation");
             this._showError(message);
         },
 
         // Reset subscriptions.
-        _resetSubscriptions: function () {
+        _resetSubscriptions: function() {
             logger.debug(this.id + "._resetSubscriptions");
             // Release handles on previous object, if any.
             this.unsubscribeAll();
@@ -238,7 +202,7 @@ define([
             if (this._contextObj) {
                 this.subscribe({
                     guid: this._contextObj.getGuid(),
-                    callback: lang.hitch(this, function (guid) {
+                    callback: lang.hitch(this, function(guid) {
                         this._updateRendering();
                     })
                 });
@@ -246,7 +210,7 @@ define([
                 this.subscribe({
                     guid: this._contextObj.getGuid(),
                     attr: this.backgroundColor,
-                    callback: lang.hitch(this, function (guid, attr, attrValue) {
+                    callback: lang.hitch(this, function(guid, attr, attrValue) {
                         this._updateRendering();
                     })
                 });
@@ -259,7 +223,7 @@ define([
             }
         },
 
-        _executeCallback: function (cb, from) {
+        _executeCallback: function(cb, from) {
             logger.debug(this.id + "._executeCallback" + (from ? " from " + from : ""));
             if (cb && typeof cb === "function") {
                 cb();
