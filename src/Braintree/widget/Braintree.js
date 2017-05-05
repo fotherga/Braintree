@@ -236,6 +236,8 @@ define([
             if (this._contextObj) {
                 var authorization = this._contextObj.get(this.token);
                 var submit = document.querySelector('input[type="submit"]');
+                var form = document.querySelector('form[id="checkout-form"]');
+                var myself = this;
 
                 btClient.create({
                     authorization: authorization
@@ -279,6 +281,44 @@ define([
                         }
 
                         submit.removeAttribute('disabled');
+
+                        form.addEventListener('submit', function(event) {
+                            event.preventDefault();
+
+                            hostedFieldsInstance.tokenize(function(tokenizeErr, payload) {
+                                if (tokenizeErr) {
+                                    // Handle error in Hosted Fields tokenization
+                                    console.log("tokenization failed");
+                                    myself._showError(tokenizeErr.message);
+                                    // if (form._alertDiv !== null) {
+                                    //     dojoHtml.set(form._alertDiv, tokenizeErr.message);
+                                    //     return true;
+                                    // }
+
+                                    // form._alertDiv = dojoConstruct.create("div", {
+                                    //     "class": "alert alert-danger",
+                                    //     "innerHTML": tokenizeErr.message
+                                    // });
+                                    // dojoConstruct.place(form._alertDiv, form);
+
+                                    // _alertDiv = dojoConstruct.create("div", {
+                                    //     "class": "alert alert-danger",
+                                    //     "innerHTML": tokenizeErr.message
+                                    // });
+                                    // dojoConstruct.place(_alertDiv, form);
+
+
+                                    return;
+                                }
+
+                                // Put `payload.nonce` into the `payment_method_nonce` input, and then
+                                // submit the form. Alternatively, you could send the nonce to your server
+                                // with AJAX.
+                                document.querySelector('input[name="payment_method_nonce"]').value = payload.nonce;
+                                form.submit();
+                            });
+                        }, false);
+
                     });
                 });
             }
