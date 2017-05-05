@@ -1,9 +1,13 @@
-.braintree {
-    
+.braintree {}
+
+.braintree-message {}
+
+.braintree-input {
+    height: 33px !important;
 }
 
-.braintree-message {
-
+.braintree-label {
+    float: right;
 }
 
 .input-group-addon {

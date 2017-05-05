@@ -2,16 +2,40 @@
     <form id="checkout-form" action="/transaction-endpoint" method="post">
         <div id="error-message"></div>
 
-        <label for="card-number">Card Number</label>
-        <div class="hosted-field" id="card-number"></div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label class="control-label braintree-label" for="card-number">Card Number</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="hosted-field form-control braintree-input" id="card-number"></div>
+                </div>
+            </div>
+        </div>
 
-        <label for="cvv">CVV</label>
-        <div class="hosted-field" id="cvv"></div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label class="control-label braintree-label" for="cvv">CVV</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="hosted-field form-control braintree-input" id="cvv"></div>
+                </div>
+            </div>
+        </div>
 
-        <label for="expiration-date">Expiration Date</label>
-        <div class="hosted-field" id="expiration-date"></div>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-4">
+                    <label class="control-label braintree-label" for="expiration-date">Expiration Date</label>
+                </div>
+                <div class="col-md-8">
+                    <div class="hosted-field form-control braintree-input" id="expiration-date"></div>
+                </div>
+            </div>
+        </div>
 
         <input type="hidden" name="payment_method_nonce">
-        <input type="submit" value="Pay" disabled>
+        <input type="submit" value="Submit" class=" btn mx-button mx-name-actionButton1 btn-success " disabled>
     </form>
 </div>
