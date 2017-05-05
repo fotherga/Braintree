@@ -47,8 +47,6 @@ define([
     return declare("Braintree.widget.Braintree", [_WidgetBase, _TemplatedMixin], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
-        //btClient: btClient,
-        //btHostedFields: btHostedFields,
 
         // DOM elements
 
