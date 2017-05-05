@@ -56,6 +56,7 @@ define([
         token: "",
         nonce: "",
         paymentAmount: "",
+        submitMicroflow: "",
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
         _handles: null,
@@ -288,25 +289,8 @@ define([
                             hostedFieldsInstance.tokenize(function(tokenizeErr, payload) {
                                 if (tokenizeErr) {
                                     // Handle error in Hosted Fields tokenization
-                                    console.log("tokenization failed");
+                                    //console.log("tokenization failed");
                                     myself._showError(tokenizeErr.message);
-                                    // if (form._alertDiv !== null) {
-                                    //     dojoHtml.set(form._alertDiv, tokenizeErr.message);
-                                    //     return true;
-                                    // }
-
-                                    // form._alertDiv = dojoConstruct.create("div", {
-                                    //     "class": "alert alert-danger",
-                                    //     "innerHTML": tokenizeErr.message
-                                    // });
-                                    // dojoConstruct.place(form._alertDiv, form);
-
-                                    // _alertDiv = dojoConstruct.create("div", {
-                                    //     "class": "alert alert-danger",
-                                    //     "innerHTML": tokenizeErr.message
-                                    // });
-                                    // dojoConstruct.place(_alertDiv, form);
-
 
                                     return;
                                 }
@@ -315,7 +299,9 @@ define([
                                 // submit the form. Alternatively, you could send the nonce to your server
                                 // with AJAX.
                                 document.querySelector('input[name="payment_method_nonce"]').value = payload.nonce;
-                                form.submit();
+                                // form.submit();
+                                myself._contextObj.set(myself.nonce, payload.nonce);
+                                myself._execMf(myself.submitMicroflow, myself._contextObj.getGuid());
                             });
                         }, false);
 

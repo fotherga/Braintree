@@ -14,7 +14,7 @@
                 <attributeType name="String" />
             </attributeTypes>
         </property>
-        <property key="Nonce" type="attribute">
+        <property key="nonce" type="attribute">
             <caption>Nonce</caption>
             <category>Behavior</category>
             <description>Response from Braintree server after payment submission.</description>
@@ -22,13 +22,19 @@
                 <attributeType name="String" />
             </attributeTypes>
         </property>
-        <property key="Amount" type="attribute">
+        <property key="amount" type="attribute">
             <caption>Payment Amount</caption>
             <category>Behavior</category>
             <description>Amount to be charged during this transaction</description>
             <attributeTypes>
                 <attributeType name="Decimal" />
             </attributeTypes>
+        </property>
+        <property key="submitMicroflow" type="microflow" required="true" defaultValue="">
+            <caption>Submit Microflow</caption>
+            <category>Behavior</category>
+            <description>The microflow to execute on click of Pay.</description>
+            <returnType type="Boolean" />
         </property>
     </properties>
 </widget>
