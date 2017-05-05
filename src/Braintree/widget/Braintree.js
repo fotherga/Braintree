@@ -47,8 +47,8 @@ define([
     return declare("Braintree.widget.Braintree", [_WidgetBase, _TemplatedMixin], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
-        btClient: btClient,
-        btHostedFields: btHostedFields,
+        //btClient: btClient,
+        //btHostedFields: btHostedFields,
 
         // DOM elements
 
@@ -73,7 +73,7 @@ define([
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function() {
             logger.debug(this.id + ".postCreate");
-            console.log(this.btClient);
+            //console.log(btClient);
 
             this._braintreeClient();
             this._updateRendering();
