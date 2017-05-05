@@ -47,8 +47,6 @@ define([
     return declare("Braintree.widget.Braintree", [_WidgetBase, _TemplatedMixin], {
         // _TemplatedMixin will create our dom node using this HTML template.
         templateString: widgetTemplate,
-        btClient: btClient,
-        btHostedFields: btHostedFields,
 
         // DOM elements
 
@@ -74,7 +72,56 @@ define([
             logger.debug(this.id + ".postCreate");
             console.log(this.btClient);
 
-            this._braintreeClient();
+            //from braintree documentation   
+
+            var authorization = this._contextObj.get(this.token);
+            var submit = document.querySelector('input[type="submit"]');
+
+            braintree.client.create({
+                authorization: authorization
+            }, function(clientErr, clientInstance) {
+                if (clientErr) {
+                    // Handle error in client creation
+                    return;
+                }
+
+                braintree.hostedFields.create({
+                    client: clientInstance,
+                    styles: {
+                        'input': {
+                            'font-size': '14pt'
+                        },
+                        'input.invalid': {
+                            'color': 'red'
+                        },
+                        'input.valid': {
+                            'color': 'green'
+                        }
+                    },
+                    fields: {
+                        number: {
+                            selector: '#card-number',
+                            placeholder: '4111 1111 1111 1111'
+                        },
+                        cvv: {
+                            selector: '#cvv',
+                            placeholder: '123'
+                        },
+                        expirationDate: {
+                            selector: '#expiration-date',
+                            placeholder: '10/2019'
+                        }
+                    }
+                }, function(hostedFieldsErr, hostedFieldsInstance) {
+                    if (hostedFieldsErr) {
+                        // Handle error in Hosted Fields creation
+                        return;
+                    }
+
+                    submit.removeAttribute('disabled');
+                });
+            });
+
             this._updateRendering();
             this._setupEvents();
         },
@@ -84,7 +131,6 @@ define([
             logger.debug(this.id + ".update");
 
             this._contextObj = obj;
-            this._braintreeClient();
             this._resetSubscriptions();
             this._updateRendering(callback); // We're passing the callback to updateRendering to be called after DOM-manipulation
         },
@@ -228,59 +274,6 @@ define([
             logger.debug(this.id + "._executeCallback" + (from ? " from " + from : ""));
             if (cb && typeof cb === "function") {
                 cb();
-            }
-        },
-
-        _braintreeClient: function() {
-            //from braintree documentation   
-            if (this._contextObj) {
-                var authorization = this._contextObj.get(this.token);
-                var submit = document.querySelector('input[type="submit"]');
-
-                btClient.create({
-                    authorization: authorization
-                }, function(clientErr, clientInstance) {
-                    if (clientErr) {
-                        // Handle error in client creation
-                        return;
-                    }
-
-                    btHostedFields.create({
-                        client: clientInstance,
-                        styles: {
-                            'input': {
-                                'font-size': '14pt'
-                            },
-                            'input.invalid': {
-                                'color': 'red'
-                            },
-                            'input.valid': {
-                                'color': 'green'
-                            }
-                        },
-                        fields: {
-                            number: {
-                                selector: '#card-number',
-                                placeholder: '4111 1111 1111 1111'
-                            },
-                            cvv: {
-                                selector: '#cvv',
-                                placeholder: '123'
-                            },
-                            expirationDate: {
-                                selector: '#expiration-date',
-                                placeholder: '10/2019'
-                            }
-                        }
-                    }, function(hostedFieldsErr, hostedFieldsInstance) {
-                        if (hostedFieldsErr) {
-                            // Handle error in Hosted Fields creation
-                            return;
-                        }
-
-                        submit.removeAttribute('disabled');
-                    });
-                });
             }
         }
     });

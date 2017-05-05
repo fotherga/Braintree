@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<widget id="Braintree.widget.Braintree" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Braintree</name>
+    <description>The description of this widget.</description>
+
+    <icon />
+
+    <properties>
+        <property key="token" type="attribute">
+            <caption>Token from Java Action</caption>
+            <category>Behavior</category>
+            <description>Token used to validate client with Braintree server</description>
+            <attributeTypes>
+                <attributeType name="String" />
+            </attributeTypes>
+        </property>
+        <property key="Nonce" type="attribute">
+            <caption>Nonce</caption>
+            <category>Behavior</category>
+            <description>Response from Braintree server after payment submission.</description>
+            <attributeTypes>
+                <attributeType name="String" />
+            </attributeTypes>
+        </property>
+        <property key="Amount" type="attribute">
+            <caption>Payment Amount</caption>
+            <category>Behavior</category>
+            <description>Amount to be charged during this transaction</description>
+            <attributeTypes>
+                <attributeType name="Decimal" />
+            </attributeTypes>
+        </property>
+    </properties>
+</widget>
+
